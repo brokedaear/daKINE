@@ -1,6 +1,6 @@
 # SPDX-FileCopyrightText: 2025 BROKE DA EAR LLC <https://brokedaear.com>
 #
-# SPDX-License-Identifier: Unlicense
+# SPDX-License-Identifier: CC0-1.0
 
 {
   # See https://github.com/numtide/treefmt-nix#supported-programs
@@ -9,6 +9,7 @@
 
   settings.global.includes = [
     "*.go"
+    ".toml"
     "*.yaml"
     "*.yml"
     "*.md"

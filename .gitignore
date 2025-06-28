@@ -14,7 +14,8 @@ vendor
 .claude/settings.local.json
 CLAUDE.md
 
-backend/database/data
+app/backend/database/data
+*.txt
 
 # Frontend
 
@@ -41,7 +42,6 @@ mprocs.log
 .DS_Store
 
 .netlify
-
 
 # Playwright
 test-results/

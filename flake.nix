@@ -41,19 +41,19 @@
         ci-backend-lint-cloc-name = "ci-backend-lint-cloc";
         ci-backend-lint-cloc-script = da-flake.lib.${system}.mkScript {
           name = ci-backend-lint-cloc-name;
-          scriptPath = ./scripts/ci-backend-lint-cloc.sh;
+          scriptPath = ./app/backend/scripts/ci-backend-lint-cloc.sh;
         };
 
         ci-backend-test-script-name = "ci-backend-test";
         ci-backend-test-script = da-flake.lib.${system}.mkScript {
           name = ci-backend-test-script-name;
-          scriptPath = ./scripts/ci-backend-test.sh;
+          scriptPath = ./app/backend/scripts/ci-backend-test.sh;
         };
 
         ci-backend-benchmark-name = "ci-backend-benchmark";
         ci-backend-benchmark-script = da-flake.lib.${system}.mkScript {
           name = ci-backend-benchmark-name;
-          scriptPath = ./scripts/ci-backend-benchmark.sh;
+          scriptPath = ./app/backend/scripts/ci-backend-benchmark.sh;
         };
 
         ciPackagesBackend =

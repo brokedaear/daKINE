@@ -1,21 +1,18 @@
 version = 1
 
 [[annotations]]
-path = ["go.mod", "go.sum", ".envrc", "flake.lock", ".editorconfig"]
-SPDX-FileCopyrightText = "NONE"
-SPDX-License-Identifier = "CC0-1.0"
-
-[[annotations]]
-path = ["scripts/shaka.txt"]
+path = [
+  "go.mod",
+  "go.sum",
+  ".envrc",
+  "flake.lock",
+  ".editorconfig",
+  "app/backend/scripts/shaka.txt",
+]
 SPDX-FileCopyrightText = "NONE"
 SPDX-License-Identifier = "CC0-1.0"
 
 [[annotations]]
 path = ["app/.env.example"]
-SPDX-FileCopyrightText = "${REUSE_COPYRIGHT}"
-SPDX-License-Identifier = "Apache-2.0"
-
-[[annotations]]
-path = ["*.proto"]
 SPDX-FileCopyrightText = "${REUSE_COPYRIGHT}"
 SPDX-License-Identifier = "Apache-2.0"
