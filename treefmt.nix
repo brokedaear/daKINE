@@ -18,13 +18,13 @@
     "*.sh"
   ];
 
-  settings.global.fail-on-change = false;
-  settings.global.no-cache = true;
+  # settings.global.fail-on-change = false;
+  # settings.global.no-cache = true;
 
   programs.gofumpt.enable = true;
   programs.goimports.enable = true;
   programs.golines.enable = true;
-  programs.protolint.enable = true;
+  programs.buf.enable = true; # protobuf
   programs.sql-formatter = {
     enable = true;
     dialect = "postgresql";
