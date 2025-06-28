@@ -38,6 +38,20 @@
 
         treefmtEval = treefmt-nix.lib.evalModule pkgs ./treefmt.nix;
 
+        # This script checks if `go-tidy` outputs something. It fails if it does.
+        go-tidy-check-name = "go-tidy-check";
+        go-tidy-check-script = da-flake.lib.${system}.mkScriptFromContent {
+          name = go-tidy-check-name;
+          content = ''
+            #!/bin/bash
+            if [ -n "$(go mod tidy)" ]; then
+                echo "Looks like go mod tidy needs to be tidy'd up..."
+                exit 1
+            fi
+            exit 0
+          '';
+        };
+
         ci-backend-lint-cloc-name = "ci-backend-lint-cloc";
         ci-backend-lint-cloc-script = da-flake.lib.${system}.mkScript {
           name = ci-backend-lint-cloc-name;
@@ -103,17 +117,23 @@
               format = {
                 enable = true;
                 name = "Format with treefmt";
-                pass_filenames = true;
+                pass_filenames = false;
                 entry = "${treefmtEval.config.build.wrapper}/bin/treefmt";
                 stages = [
                   "pre-commit"
                   "pre-push"
                 ];
               };
+              go-tidy-check = {
+                enable = true;
+                name = "`go mod tidy` check";
+                entry = "${go-tidy-check-name}";
+                stages = [ "pre-push" ];
+              };
               lint-go = {
                 enable = true;
-                name = "Tidy and lint Go files";
-                entry = "go mod tidy && golangci-lint run --config ./.golangci.yml";
+                name = "Lint Go files";
+                entry = "golangci-lint run --config ./.golangci.yml";
                 pass_filenames = false;
                 types = [ "go" ];
                 stages = [ "pre-push" ];
@@ -154,6 +174,7 @@
           default = pkgs.mkShell {
             buildInputs =
               [
+                go-tidy-check-script
                 ci-backend-lint-cloc-script
                 ci-backend-test-script
                 ci-backend-benchmark-script
@@ -183,6 +204,7 @@
           };
           ci-backend = pkgs.mkShell {
             buildInputs = [
+              go-tidy-check-script
               ci-backend-lint-cloc-script
               ci-backend-test-script
               ci-backend-benchmark-script
