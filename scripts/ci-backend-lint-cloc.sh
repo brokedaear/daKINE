@@ -11,8 +11,14 @@ figlet -f chunky Broke
 figlet -f chunky da
 figlet -f chunky LINT
 
+# This will fail if go mod changes
+echo "Ensuring no go mod updates..."
+[ -n "$(go mod tidy)" ] && exit 1
+
 echo "Linting Go files..."
 golangci-lint run --fix --config ./.golangci.yml --allow-serial-runners
+
+printf "\n\n"
 
 echo "Linting Protobuf files..."
 protoc -I . --include_source_info "$(find . -name '*.proto')" -o /dev/stdout | buf lint -

@@ -7,10 +7,13 @@
 set -euo pipefail
 
 printf "\n\n"
+
 figlet -f chunky BrokeDa
 figlet -f chunky goTESTS
+
 echo "Running Go tests..."
-gotestsum --format testdox ./...
+# gotestsum --format testdox ./...
+go test -mod=readonly ./...
 
 printf "\n\n"
 

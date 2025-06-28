@@ -12,10 +12,10 @@ SPDX-License-Identifier = "CC0-1.0"
 
 [[annotations]]
 path = ["app/.env.example"]
-SPDX-FileCopyrightText = "2025 BROKE DA EAR LLC <https://brokedaear.com>"
+SPDX-FileCopyrightText = "${REUSE_COPYRIGHT}"
 SPDX-License-Identifier = "Apache-2.0"
 
 [[annotations]]
 path = ["*.proto"]
-SPDX-FileCopyrightText = "2025 BROKE DA EAR LLC <https://brokedaear.com>"
+SPDX-FileCopyrightText = "${REUSE_COPYRIGHT}"
 SPDX-License-Identifier = "Apache-2.0"

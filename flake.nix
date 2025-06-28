@@ -1,6 +1,6 @@
 # SPDX-FileCopyrightText: 2025 BROKE DA EAR LLC <https://brokedaear.com>
 #
-# SPDX-License-Identifier: Unlicense
+# SPDX-License-Identifier: CC0-1.0
 
 {
   inputs = {
@@ -112,20 +112,20 @@
               };
               lint-go = {
                 enable = true;
-                name = "Lint Go files";
-                entry = "golangci-lint run --config ./.golangci.yml";
+                name = "Tidy and lint Go files";
+                entry = "go mod tidy && golangci-lint run --config ./.golangci.yml";
                 pass_filenames = false;
                 types = [ "go" ];
                 stages = [ "pre-push" ];
               };
               lint-reuse = {
                 enable = true;
-                name = "Lint licenses";
+                name = "Lint licenses using reuse";
                 pass_filenames = false;
                 entry = "reuse lint";
                 stages = [ "pre-push" ];
               };
-              unit-tests = {
+              unit-tests-go = {
                 enable = true;
                 name = "Run unit tests";
                 entry = "gotestsum --format testdox ./...";
