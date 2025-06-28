@@ -1,0 +1,95 @@
+# SPDX-FileCopyrightText: 2025 BROKE DA EAR LLC <https://brokedaear.com>
+#
+# SPDX-License-Identifier: Apache-2.0
+name: Backend
+on:
+  workflow_dispatch:
+  push:
+    branches: ["dev"]
+    paths:
+      - ".github/workflows/backend.yml"
+      - "src/backend/**"
+      - "!src/backend/*.env.*"
+      - "!src/backend/**/*.{md,yml,yaml,toml,json,txt}"
+      - "!src/backend/**/*.{sql,sum,mod}"
+      - "!src/backend/**/*.{gitignore,envrc}"
+  pull_request:
+    branches: ["dev"]
+    paths:
+      - ".github/workflows/backend.yml"
+      - "src/backend/**"
+      - "!src/backend/*.env.*"
+      - "!src/backend/**/*.{md,yml,yaml,toml,json,txt}"
+      - "!src/backend/**/*.{sql,sum,mod}"
+      - "!src/backend/**/*.{gitignore,envrc}"
+jobs:
+  lint-cloc:
+    name: Lint and CLOC
+    runs-on: ubuntu-${{ vars.RUNNER_VERSION }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: cachix/install-nix-action@v31.4.0
+        with:
+          nix_path: nixpkgs=channel:nixos-unstable
+      - uses: cachix/cachix-action@v16
+        with:
+          name: brokedaear
+          authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
+      - run: nix flake check --print-build-logs
+      - name: Lint and Test
+        run: nix develop .#ci-backend --profile ci-env -c ci-backend-lint-cloc
+  tests:
+    name: Tests
+    runs-on: ubuntu-${{ vars.RUNNER_VERSION }}
+    needs: lint-cloc
+    steps:
+      - uses: actions/checkout@v4
+      - uses: cachix/install-nix-action@v31.4.0
+        with:
+          nix_path: nixpkgs=channel:nixos-unstable
+      - uses: cachix/cachix-action@v16
+        with:
+          name: brokedaear
+          authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
+      - name: Run Benchmarks
+        run: nix develop .#ci-backend --profile ci-env -c ci-backend-test
+  benchmark:
+    name: Benchmarks
+    runs-on: ubuntu-${{ vars.RUNNER_VERSION }}
+    needs: tests
+    steps:
+      - uses: actions/checkout@v4
+      - uses: cachix/install-nix-action@v31.4.0
+        with:
+          nix_path: nixpkgs=channel:nixos-unstable
+      - uses: cachix/cachix-action@v16
+        with:
+          name: brokedaear
+          authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
+      - name: Run Benchmarks
+        run: nix develop .#ci-backend --profile ci-env -c ci-backend-benchmark
+        # - name: Update cache
+        #   if: success()
+        #   env:
+        #     CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
+        #   run: cachix push brokedaear ci-env
+# - name: Install Nix
+#   uses: DeterminateSystems/nix-installer-action@main
+# - uses: DeterminateSystems/flakehub-cache-action@main
+# - name: Check Nixpkgs inputs
+#   uses: DeterminateSystems/flake-checker-action@main
+#   with:
+#     fail-mode: true
+
+# lint-and-test:
+#   name: Formatting and Linting
+#   runs-on: ubuntu-${{ vars.RUNNER_VERSION }}
+#   needs: check-flake
+#   steps:
+#       uses: actions/checkout@v4
+#     - name: Install Nix
+#       uses: DeterminateSystems/nix-installer-action@main
+#     - uses: DeterminateSystems/flakehub-cache-action@main
+#
+#     - name: Lint and Test
+#       run: nix develop .#ci --command run-ci
