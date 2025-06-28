@@ -14,7 +14,7 @@ This backend follows a small modification of the Hexagonal Architecture pattern.
 
 ### Domain
 
-Domain types, such as Data Transfer Objects (DTOs), exist in `app/domain`.
+Domain types, such as Data Transfer Objects (DTOs), exist in `internal/core/domain`.
 
 ### Adapters
 
