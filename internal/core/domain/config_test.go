@@ -7,7 +7,7 @@ package domain_test
 import (
 	"testing"
 
-	"go.brokedaear.com/app/domain"
+	"go.brokedaear.com/internal/core/domain"
 	"go.brokedaear.com/pkg/assert"
 	"go.brokedaear.com/pkg/test"
 )

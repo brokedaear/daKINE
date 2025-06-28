@@ -18,9 +18,9 @@ import (
 
 	"google.golang.org/grpc/health/grpc_health_v1"
 
-	"go.brokedaear.com/app/domain"
 	"go.brokedaear.com/internal/common/telemetry"
 	"go.brokedaear.com/internal/common/utils/loggers"
+	"go.brokedaear.com/internal/core/domain"
 	"go.brokedaear.com/internal/core/server"
 )
 

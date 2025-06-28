@@ -7,9 +7,9 @@ package service
 import (
 	"slices"
 
-	"go.brokedaear.com/app/domain"
 	"go.brokedaear.com/internal/common/telemetry"
 	"go.brokedaear.com/internal/common/utils/loggers"
+	"go.brokedaear.com/internal/core/domain"
 	"go.brokedaear.com/internal/core/server"
 	"go.brokedaear.com/pkg/crypto"
 	"go.brokedaear.com/pkg/errors"

@@ -13,7 +13,7 @@ import (
 	"os"
 	"syscall"
 
-	"go.brokedaear.com/app/domain"
+	"go.brokedaear.com/internal/core/domain"
 	"go.brokedaear.com/pkg/errors"
 
 	"go.opentelemetry.io/contrib/bridges/otelzap"

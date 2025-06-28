@@ -5,7 +5,7 @@
 package service
 
 import (
-	"go.brokedaear.com/app/domain"
+	"go.brokedaear.com/internal/core/domain"
 )
 
 type WebshopCustomerHandler interface {
