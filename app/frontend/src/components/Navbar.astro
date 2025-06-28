@@ -1,0 +1,51 @@
+---
+interface Tab {
+  name: string
+  url: string
+}
+
+const tabs: Tab[] = [
+  {
+    name: 'News',
+    url: '/news',
+  },
+  {
+    name: 'Plugins',
+    url: '/plugins/dawcandy',
+  },
+  {
+    name: 'About',
+    url: '/about',
+  },
+  {
+    name: 'Sign In',
+    url: '/signin',
+  },
+  {
+    name: 'Cart',
+    url: '/cart',
+  },
+]
+---
+
+<nav
+  class="list-none tracking-wide font-bold text-slate-200 w-fit overflow-hidden"
+>
+  {
+    tabs.map(tab => {
+      return (
+        <li class="inline mr-2">
+          <a href={tab.url} class="hover:underline">
+            {tab.name}
+          </a>
+        </li>
+      )
+    })
+  }
+</nav>
+
+<style>
+  nav > li > a {
+    text-align: center;
+  }
+</style>

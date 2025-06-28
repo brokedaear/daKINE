@@ -1,0 +1,53 @@
+{
+  "name": "website",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro check && astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "test": "playwright test"
+  },
+  "dependencies": {
+    "@astrojs/check": "^0.9.4",
+    "@astrojs/mdx": "^4.3.0",
+    "@astrojs/netlify": "^6.4.0",
+    "@astrojs/react": "^4.3.0",
+    "@astrojs/sitemap": "^3.4.1",
+    "@auth/core": "^0.18.6",
+    "@oslojs/crypto": "^1.0.1",
+    "@oslojs/encoding": "^1.1.0",
+    "@stripe/stripe-js": "^7.4.0",
+    "@tailwindcss/vite": "^4.1.11",
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6",
+    "arctic": "^3.7.0",
+    "astro": "^5.10.1",
+    "astro-auto-import": "^0.4.4",
+    "astro-compressor": "^1.0.0",
+    "astro-embed": "^0.9.0",
+    "astro-favicons": "^3.1.5",
+    "astro-seo": "^0.8.4",
+    "ioredis": "^5.6.1",
+    "lucia": "^3.2.2",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "stripe": "^18.2.1",
+    "tailwind-merge": "^3.3.1",
+    "tailwindcss": "^4.1.11",
+    "typescript": "^5.8.3",
+    "validator": "^13.15.15"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.10.2",
+    "@playwright/test": "^1.53.1",
+    "@types/node": "^24.0.4",
+    "@types/validator": "^13.15.2",
+    "eslint": "^9.29.0",
+    "eslint-config-prettier": "^10.1.5",
+    "prettier": "^3.6.1",
+    "prettier-plugin-astro": "^0.14.1",
+    "vitest": "^3.2.4"
+  }
+}

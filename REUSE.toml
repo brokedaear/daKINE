@@ -13,6 +13,6 @@ SPDX-FileCopyrightText = "NONE"
 SPDX-License-Identifier = "CC0-1.0"
 
 [[annotations]]
-path = ["app/.env.example"]
+path = ["app/frontend/**"]
 SPDX-FileCopyrightText = "${REUSE_COPYRIGHT}"
 SPDX-License-Identifier = "Apache-2.0"

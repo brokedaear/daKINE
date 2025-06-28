@@ -1,0 +1,122 @@
+---
+// About page implements v1.0.0-s3.5
+
+import ContactInfoBox from '@components/ContactInfoBox.astro'
+import WordMarkLogo from '@components/images/WordMarkLogo.astro'
+import MadeInHawaii from '@components/MadeInHawaii.astro'
+import CenteredLayout from '@layouts/CenteredLayout.astro'
+
+// Set caches page for Netlify Adapter.
+Astro.response.headers.set(
+  'CDN-Cache-Control',
+  'public, max-age=45, must-revalidate'
+)
+---
+
+<CenteredLayout title="About">
+  <div
+    class="mx-auto flex flex-col min-h-screen justify-center items-center text-neutral-900"
+  >
+    <header class="max-w-5xl p-8 sm:pt-18">
+      <h1
+        class="font-block uppercase text-center font-bold tracking-wide text-xl p-2 pb-8 leading-relaxed"
+        >About</h1
+      >
+      <a href="/">
+        <WordMarkLogo />
+      </a>
+    </header>
+    <div class="py-10">
+      <p class="tracking-wide leading-normal"
+        >Broke da EAR! makes audio plugins.</p
+      >
+    </div>
+    <article
+      class="max-w-4xl p-4 relative flex flex-col space-y-8 sm:space-y-20 sm:pt-12"
+    >
+      <section class="pb-4 sm:grid grid-cols-3 gap-4">
+        <h2
+          id="who-is-brokedaear"
+          class="font-block font-bold tracking-wide text-2xl sm:text-4xl p-2 text-center sm:text-left leading-relaxed"
+          ><span class="sm:text-2xl">da </span>WHO?</h2
+        >
+        <div class="col-span-2 p-4">
+          <p class="tracking-wide p-2 text-lg sm:text-xl leading-normal pb-4"
+            >We're a small posse of musicians, engineers, artists, designers,
+            and programmers sharing the same mission.</p
+          >
+          <p class="p-2 text-2xl sm:text-4xl leading-tight">
+            <strong class="font-medium"
+              >We challenge audio plugin industry norms by encouraging creators
+              to confront their sounds in novel visual contexts.
+            </strong>
+          </p>
+        </div>
+      </section>
+      <section class="pb-4 sm:grid grid-cols-3 gap-4">
+        <h2
+          id="what-does-brokedaear-do"
+          class="font-block font-bold tracking-wide text-2xl sm:text-4xl p-2 text-center sm:text-left leading-relaxed"
+          ><span class="sm:text-2xl">da </span>WHAT?</h2
+        >
+        <div class="p-4 col-span-2">
+          <p class="tracking-wide text-lg sm:text-xl leading-normal">
+            In-the-box production, mixing, and mastering has no need to be a
+            bunch of literal knobs, sliders, and graphs inside a graphical box.
+            Sound exists outside the confines of the studio too, so
+            <strong class="font-normal"
+              >why should we box ourselves in by reinventing and implementing
+              analog gear?
+            </strong>
+          </p>
+        </div>
+      </section>
+      <section class="pb-4 sm:grid grid-cols-3 gap-4">
+        <h2
+          id="brokedaear-mission"
+          class="font-block font-bold tracking-wide text-2xl sm:text-4xl p-2 text-center sm:text-left leading-relaxed"
+          ><span class="sm:text-2xl">da </span>BOTTOM LINE!</h2
+        >
+        <div class="p-4 col-span-2">
+          <p class="tracking-wide text-lg sm:text-xl leading-normal">
+            Think outside the box while working in it. <strong
+              class="font-normal"
+              >When you make music, you don't need to use just your ears. We
+              hope our plugins can let you use your eyes even <i
+                class="font-serif font-semibold text-xl leading-tight"
+                >mo’ bettah</i
+              ></strong
+            >.
+          </p>
+        </div>
+      </section>
+      <footer>
+        <nav
+          id="footer-nav"
+          aria-label="Main"
+          class="flex flex-col items-center pb-8"
+        >
+          <ul class="text-center">
+            <li class="p-1">
+              <a
+                class="p-1 font-block font-bold tracking-wide w-fit hover:underline uppercase"
+                href="/about/privacy-policy"
+                >See <span class="lowercase">da</span> Privacy Policy</a
+              >
+            </li>
+            <li class="p-1">
+              <a
+                class="p-1 font-block font-bold tracking-wide w-fit hover:underline uppercase"
+                href="/">Return Home</a
+              >
+            </li>
+          </ul>
+        </nav>
+        <MadeInHawaii />
+      </footer>
+    </article>
+    <footer class="py-4 text-neutral-700">
+      <ContactInfoBox />
+    </footer>
+  </div>
+</CenteredLayout>

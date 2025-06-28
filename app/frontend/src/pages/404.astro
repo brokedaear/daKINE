@@ -1,0 +1,36 @@
+---
+import CenteredLayout from '@layouts/CenteredLayout.astro'
+---
+
+<CenteredLayout>
+  <div class="bg-blue-700 text-white">
+    <div
+      class="ml-auto mr-auto flex flex-col min-h-screen justify-center items-center"
+    >
+      <header>
+        <h1
+          class="text-7xl sm:text-9xl tracking-tight select-none font-mono p-4"
+          >404</h1
+        >
+      </header>
+      <p class="tracking-wide text-sm sm:text-xl select-none p-2 font-semibold"
+        >EHHH!?!?</p
+      >
+      <div
+        style="height: 3rem; border-radius: 100%;"
+        class="ml-auto mr-auto flex flex-col bg-red-200 p-4 justify-center max-w-xs sm:max-w-xs"
+      >
+        <p
+          class="font-sans text-neutral-800 text-xs sm:text-sm font-semibold tracking-wide select-none p-8"
+          >page not found</p
+        >
+      </div>
+      <footer class="p-8">
+        <a
+          class="font-mono text-xs sm:text-sm tracking-wider underline"
+          href="/">...back to homepage...</a
+        >
+      </footer>
+    </div>
+  </div>
+</CenteredLayout>

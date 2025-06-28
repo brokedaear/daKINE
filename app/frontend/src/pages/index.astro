@@ -1,0 +1,43 @@
+---
+import InfoCallout from '@components/callouts/InfoCallout.astro'
+import ContactInfoBox from '@components/ContactInfoBox.astro'
+import HeroLogo from '@components/images/HeroLogo.astro'
+import CenteredLayout from '@layouts/CenteredLayout.astro'
+---
+
+<CenteredLayout>
+  <div class="">
+    <div class="center flex flex-col min-h-screen justify-center items-center">
+      <header>
+        <div class="max-w-3xl">
+          <HeroLogo />
+        </div>
+        <h1
+          class="center font-block font-bold tracking-wide text-sm sm:text-lg p-2 text-neutral-700 w-fit uppercase"
+          >Broke da EAR! Audio Plugins</h1
+        >
+        <nav id="main-nav" aria-label="Main" class="p-4 font-block">
+          <ul class="flex flex-col items-center">
+            <li
+              class="p-1 font-bold text-neutral-500 w-fit opacity-50 select-none uppercase tracking-wide"
+              >Plugins</li
+            >
+            <li
+              class="p-1 font-bold text-neutral-500 w-fit opacity-50 select-none uppercase tracking-wide"
+              >Blog</li
+            >
+            <li class="p-1 font-bold text-neutral-700 w-fit"
+              ><a href="/about" class="hover:underline uppercase tracking-wide"
+                >About</a
+              ></li
+            >
+          </ul>
+        </nav>
+      </header>
+      <InfoCallout>da kine coming soon</InfoCallout>
+      <footer>
+        <ContactInfoBox />
+      </footer>
+    </div>
+  </div>
+</CenteredLayout>

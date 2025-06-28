@@ -1,0 +1,11 @@
+---
+const cart = await Astro.session?.get('shoppingCart')
+let totalItems = 0
+cart?.items.keys().map(val => {
+  totalItems += cart?.items.get(val)?.count!
+})
+---
+
+<div>
+  {totalItems ? <div>Total Items: {totalItems}</div> : <div>Cart empty</div>}
+</div>

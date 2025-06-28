@@ -1,0 +1,20 @@
+---
+// ContactInfoBox implements v1.0.0-s3.5.2
+import AboutLogo from './images/AboutLogo.astro'
+---
+
+<div class="p-2 justify-center max-w-xs sm:max-w-sm flex">
+  <div class="w-20 h-20 p-2 mx-auto opacity-80 select-none">
+    <AboutLogo />
+  </div>
+  <div class="relative top-2 -left-2">
+    <address
+      class="p-2 font-bold tracking-wider font-serif"
+      aria-label="Contact Information"
+    >
+      <a href="mailto:howzit@brokedaear.com" class="hover:underline"
+        >howzit@brokedaear.com</a
+      ></address
+    >
+  </div>
+</div>

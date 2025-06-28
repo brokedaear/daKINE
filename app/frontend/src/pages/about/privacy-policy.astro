@@ -1,0 +1,69 @@
+---
+export const prerender = true
+
+import CenteredLayout from '@layouts/CenteredLayout.astro'
+import * as info from '@content/privacy-policy.mdx'
+import { Content } from '@content/privacy-policy.mdx'
+import H2 from '@components/privacy-page/H2.astro'
+import H3 from '@components/privacy-page/H3.astro'
+import UL from '@components/privacy-page/UL.astro'
+import P from '@components/privacy-page/P.astro'
+import LI from '@components/privacy-page/LI.astro'
+import HR from '@components/privacy-page/HR.astro'
+
+// See: https://docs.astro.build/en/guides/integrations-guide/mdx/#custom-components-with-imported-mdx
+// https://tanggd.github.io/en/guides/markdown-content/
+// and https://mdxjs.com/table-of-components/
+
+const effectiveDate = new Date(info.frontmatter.effectiveDate)
+---
+
+<CenteredLayout title="Privacy Policy">
+  <div class="center flex flex-col justify-center items-center p-2 m-1">
+    <article class="max-w-full sm:max-w-xl font-sans text-base">
+      <header class="p-1 m-1 pb-4">
+        <h1 class="font-bold font-block mb-1 pb-4 text-xl sm:text-3xl uppercase"
+          >Broke da EAR!<br />{info.frontmatter.title}</h1
+        >
+        <p class="italic"
+          >Effective Date: <time>{effectiveDate.toDateString()}</time>
+        </p>
+      </header>
+      <p
+        class="p-2 pb-4 text-lg sm:text-xl text-left leading-normal tracking-wide"
+        >At Broke da EAR!, we are dedicated to maintaining your trust by
+        safeguarding your privacy. This Privacy Policy outlines the ways we
+        gather, utilize, disclose, and protect your personal information when
+        you interact with our website or use our services. By accessing our
+        website, you agree to the practices described in this Privacy Policy.</p
+      >
+      <div class="sm:p-2 tracking-wide">
+        <Content
+          components={{ h2: H2, h3: H3, ul: UL, p: P, li: LI, hr: HR }}
+        />
+      </div>
+      <footer class="p-4 border-1 my-4 border-dotted tracking-wide">
+        <h1 class="font-bold leading-loose text-center">Contact Us</h1>
+        <p class="p-1">
+          If you have any questions, concerns, or requests regarding this
+          Privacy Policy or how your data is handled, please reach out to us at:
+        </p>
+        <address class="font-semibold not-italic text-center p-2">
+          <a href="mailto:data@brokedaear.com"> data@brokedaear.com </a>
+        </address>
+        <p class="p-1">
+          We appreciate your trust in Broke da EAR! and are committed to
+          safeguarding your privacy.
+        </p>
+      </footer>
+    </article>
+  </div>
+  <footer class="m-4">
+    <nav id="footer-nav" aria-label="Main" class="flex flex-col items-center">
+      <a
+        class="p-1 font-bold tracking-wide w-fit hover:underline text-sm uppercase font-block"
+        href="/about">Back to About</a
+      >
+    </nav>
+  </footer>
+</CenteredLayout>

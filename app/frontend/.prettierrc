@@ -1,0 +1,52 @@
+{
+  "useTabs": false,
+  "endOfLine": "auto",
+  "printWidth": 80,
+  "arrowParens": "avoid",
+  "proseWrap": "preserve",
+  "htmlWhitespaceSensitivity": "strict",
+  "bracketSpacing": true,
+  "insertPragma": false,
+  "requirePragma": false,
+  "quoteProps": "as-needed",
+  "trailingComma": "es5",
+  "parser": "babel",
+  "jsxSingleQuote": false,
+  "vueIndentScriptAndStyle": false,
+  "semi": false,
+  "tabWidth": 2,
+  "singleQuote": true,
+  "plugins": ["prettier-plugin-astro"],
+  "overrides": [
+    {
+      "files": "*.html",
+      "options": { "parser": "html" }
+    },
+    {
+      "files": "*.css",
+      "options": { "parser": "css" }
+    },
+    {
+      "files": "*.{ts,js,mjs}",
+      "options": { "parser": "flow" }
+    },
+    {
+      "files": "*.json",
+      "options": { "parser": "json" }
+    },
+    {
+      "files": "*.md",
+      "options": { "parser": "markdown" }
+    },
+    {
+      "files": ".prettierrc",
+      "options": { "parser": "json" }
+    },
+    {
+      "files": "*.astro",
+      "options": {
+        "parser": "astro"
+      }
+    }
+  ]
+}

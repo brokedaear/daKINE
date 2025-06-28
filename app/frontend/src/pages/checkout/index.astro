@@ -1,0 +1,9 @@
+---
+
+---
+
+<script>
+  import { STRIPE_PUBLIC_API_KEY } from 'astro:env/client'
+  import { loadStripe } from '@stripe/stripe-js'
+  const stripe = await loadStripe(STRIPE_PUBLIC_API_KEY)
+</script>
