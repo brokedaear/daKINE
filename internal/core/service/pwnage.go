@@ -13,7 +13,7 @@ import (
 	"go.brokedaear.com/pkg/crypto"
 )
 
-// PwnChecker checks if a password got pwned.
+// PwnChecker checks if a password has been pwned.
 type PwnChecker[T any] interface {
 	Check(password string) (bool, error)
 }

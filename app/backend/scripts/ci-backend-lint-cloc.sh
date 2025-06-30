@@ -18,19 +18,27 @@ echo "Ensuring no go mod updates..."
 echo "Linting Go files..."
 golangci-lint run --fix --config ./.golangci.yml --allow-serial-runners
 
-printf "\n\n"
+printf "\n"
 
 echo "Linting Protobuf files..."
 protoc -I . --include_source_info "$(find . -name '*.proto')" -o /dev/stdout | buf lint -
 
-printf "\n\n"
+printf "\n"
 
-echo "Linting Licenses..."
+echo "Linting licenses..."
 reuse lint
 
-printf "\n\n"
+printf "\n"
 figlet -f chunky CLOC
-tokei .
+
+echo "app/backend"
+tokei ./app/backend --files --columns 80 --sort code
 
 printf "\n\n"
+
+echo "internal and pkg"
+tokei internal pkg --files --columns 80 --sort code
+
+printf "\n\n"
+
 figlet -f cricket allPau! | dotacat

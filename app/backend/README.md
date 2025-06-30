@@ -14,7 +14,10 @@ This backend follows a small modification of the Hexagonal Architecture pattern.
 
 ### Domain
 
-Domain types, such as Data Transfer Objects (DTOs), exist in `internal/core/domain`.
+Domain types, such as Data Transfer Objects (DTOs), exist in
+`internal/core/domain`. There is an attempt to stay away from the [Anemic Domain
+Model](https://en.wikipedia.org/wiki/Anemic_domain_model), so business logic and
+validation should happen in the domain package.
 
 ### Adapters
 
