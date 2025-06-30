@@ -2,4 +2,5 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
+// Package adapters contains adapters for various external services.
 package adapters

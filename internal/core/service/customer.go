@@ -34,7 +34,6 @@ type CustomerDeleter interface {
 type CustomerUpdater interface {
 	UpdateInformation(*domain.Customer) error
 	UpdatePassword(*domain.Customer) error
-	ResetPassword(*domain.Customer) error
 }
 
 type CustomerRetriever interface {
@@ -62,7 +61,11 @@ func NewCustomerService(
 	log loggers.Logger,
 ) CustomerService {
 	p := pwnCheckOnline[[]string]{
-		checker: server.NewHTTPRequestClient(log, tel, stringSliceParser[[]string]{}),
+		checker: server.NewHTTPRequestClient(
+			log,
+			tel,
+			stringSliceParser[[]string]{},
+		),
 	}
 	return &customerService{
 		repo: repo, tel: tel, logger: log, pwnChecker: p,
@@ -74,6 +77,21 @@ type customerService struct {
 	tel        telemetry.Telemetry
 	logger     loggers.Logger
 	pwnChecker PwnChecker[[]string]
+}
+
+func (c *customerService) DeleteCustomer(_ *domain.Customer) error {
+	return nil
+}
+
+func (c *customerService) Update(customer *domain.Customer) (
+	*domain.Customer,
+	error,
+) {
+	err := c.repo.UpdateInformation(customer)
+	if err != nil {
+		return nil, err
+	}
+	return customer, nil
 }
 
 // Exists returns a customer if they exist.
@@ -101,8 +119,11 @@ func (c *customerService) Delete(customer *domain.Customer) error {
 	return nil
 }
 
-// Login signs a customer into the application.
-func (c *customerService) SignIn(email, auth0ID, password string) (*domain.Customer, error) {
+// SignIn signs a customer into the application.
+func (c *customerService) SignIn(email, auth0ID, password string) (
+	*domain.Customer,
+	error,
+) {
 	var (
 		customer *domain.Customer
 		err      error
@@ -121,9 +142,11 @@ func (c *customerService) SignIn(email, auth0ID, password string) (*domain.Custo
 	storedHash := string(customer.PasswordHash)
 	ok, err := crypto.ValidatePassword(password, storedHash)
 	if err != nil || !ok {
+		c.logger.Warn("incorrect user password", "customer_id", customer.ID)
 		return nil, ErrCustomerLoginFailed
 	}
-	// TODO: Add the user to the active sessions database.
+	// TODO: Add the user to the active sessions database. But this will probably
+	// happen in the frontend.
 	return customer, nil
 }
 
@@ -143,7 +166,7 @@ const reallyLongPasswordLength = 256
 //     longer than 256 bytes. Also, the password cannot be pwned--that means
 //     it cannot exist in the "haveibeenpwned" database of leaked password
 //     hashes.
-//  2. The email is validated. The characters preeceeding the `@` symbol cannot
+//  2. The email is validated. The characters preceding the `@` symbol cannot
 //     longer than 256 bytes.
 //  3. If all is well, the new user is inserted into the repository.
 //
@@ -151,11 +174,14 @@ const reallyLongPasswordLength = 256
 // has already been validated by some means (such as in the frontend).
 // The flow follows:
 //  1. The auth0 ID is checked for existence in the database. If it does exist
-//     in the database and the customer making the sign up request is who they
+//     in the database and the customer making the sign-up request is who they
 //     are authenticated as via Auth0, the customer data is returned--no sign up
 //     takes place.
 //  2. Else, the customer is inserted directly into the database.
-func (c *customerService) SignUp(email, auth0ID, password string) (*domain.Customer, error) {
+func (c *customerService) SignUp(email, auth0ID, password string) (
+	*domain.Customer,
+	error,
+) {
 	var (
 		customer *domain.Customer
 		err      error
@@ -176,9 +202,12 @@ func (c *customerService) SignUp(email, auth0ID, password string) (*domain.Custo
 	// if Auth0 is used.
 
 	// TODO: Check if the email is alright.
+	// The way to do this is to assume that an email exists. When the user is
+	// finished signing up, send a verification email to the customer. If the
+	// email is legit, they will receive the email. If not, nothing happens.
 
 	// TODO: Check if the auth0ID is alright. If an auth0 account already
-	// exists, GTFO and login.
+	// exists and the user cookie is alright, GTFO and login.
 
 	// Reject passwords greater than 256 bytes.
 	if len(password) >= reallyLongPasswordLength {
@@ -221,9 +250,12 @@ func hasZeroValue(vals ...string) bool {
 // getCustomer retrieves a customer from a repository based on an email or
 // an auth0 ID. If the email and auth0ID are both of the type's zero value,
 // an error is returned. Of course, the frontend can validate that a request
-// does not send a flawed sign up request, but checking once again in
+// does not send a flawed sign-up request, but checking once again in
 // the backend is a good sanitary habit.
-func (c *customerService) getCustomer(email, auth0ID string) (*domain.Customer, error) {
+func (c *customerService) getCustomer(email, auth0ID string) (
+	*domain.Customer,
+	error,
+) {
 	var (
 		customer *domain.Customer
 		err      error

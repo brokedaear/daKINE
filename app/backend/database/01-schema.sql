@@ -86,7 +86,7 @@ CREATE TABLE users (
   email VARCHAR(255) UNIQUE NOT NULL,
   email_verified BOOLEAN DEFAULT FALSE,
   password_hash TEXT NOT NULL,
-  total_purchases_amount DECIMAL(10, 2) DEFAULT 0.00,
+  total_purchases_amount INTEGER DEFAULT 0,
   total_purchases_count INTEGER DEFAULT 0,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
@@ -101,7 +101,7 @@ CREATE TABLE users (
 -- ============================================================================
 -- PRODUCT CATEGORIES TABLE
 -- ============================================================================
--- v1.0.0-s3.1.2
+-- SPEC: v1.0.0-s3.1.2
 CREATE TABLE product_categories (
   id UUID PRIMARY KEY DEFAULT uuidv7 (),
   name VARCHAR(100) UNIQUE NOT NULL,
@@ -119,16 +119,14 @@ CREATE TABLE products (
   name VARCHAR(200) NOT NULL,
   description TEXT NOT NULL,
   short_description VARCHAR(500),
-  price DECIMAL(10, 2) NOT NULL,
+  price INTEGER NOT NULL,
   currency VARCHAR(3) DEFAULT 'USD',
   version VARCHAR(20) NOT NULL DEFAULT '1.0.0',
   download_filename VARCHAR(255) NOT NULL,
   file_size_bytes BIGINT,
   file_checksum VARCHAR(64),
-  -- v1.0.0-s3.1.2
-  creative_commons_license VARCHAR(100),
-  artistic_credits TEXT,
-  technical_credits TEXT,
+  -- SPEC: v1.0.0-s3.1.2
+  credits TEXT,
   category_id UUID REFERENCES product_categories (id),
   created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
@@ -139,15 +137,15 @@ CREATE TABLE products (
 -- ============================================================================
 -- ORDERS TABLE
 -- ============================================================================
--- v1.0.0-s3.2.1
+-- SPEC: v1.0.0-s3.2.1
 CREATE TABLE orders (
   id UUID PRIMARY KEY DEFAULT uuidv7 (),
   user_id UUID NOT NULL REFERENCES users (id),
   stripe_payment_intent_id VARCHAR(255) UNIQUE NOT NULL,
   stripe_customer_id VARCHAR(255),
-  total_amount DECIMAL(10, 2) NOT NULL,
+  total_amount INTEGER NOT NULL,
   currency VARCHAR(3) DEFAULT 'USD',
-  tax_amount DECIMAL(10, 2) DEFAULT 0.00,
+  tax_amount INTEGER DEFAULT 0,
   status VARCHAR(50) NOT NULL DEFAULT 'pending',
   -- Of the from BDE-YYYYMMDD-XXXXXXXX
   order_number VARCHAR(21) UNIQUE NOT NULL,
@@ -180,9 +178,9 @@ CREATE TABLE order_items (
   -- Item details at the time of purchase
   -- These will not change if product information changes
   product_name VARCHAR(200) NOT NULL,
-  product_price DECIMAL(10, 2) NOT NULL,
+  product_price INTEGER NOT NULL,
   quantity INTEGER NOT NULL DEFAULT 1,
-  line_total DECIMAL(10, 2) NOT NULL,
+  line_total INTEGER NOT NULL,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT order_items_quantity_positive CHECK (quantity > 0),
   CONSTRAINT order_items_price_positive CHECK (product_price >= 0),
@@ -192,7 +190,7 @@ CREATE TABLE order_items (
 -- ============================================================================
 -- USER DOWNLOADS TABLE
 -- ============================================================================
--- Tracks download history for purchased products (v1.0.0-s3.4.2)
+-- Tracks download history for purchased products (SPEC: v1.0.0-s3.4.2)
 CREATE TABLE user_downloads (
   id UUID PRIMARY KEY DEFAULT uuidv7 (),
   user_id UUID NOT NULL REFERENCES users (id),
