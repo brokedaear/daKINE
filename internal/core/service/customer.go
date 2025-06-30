@@ -50,7 +50,7 @@ type CustomerRetriever interface {
 type CustomerService interface {
 	SignIn(email, auth0ID, password string) (*domain.Customer, error)
 	SignUp(email, auth0ID, password string) (*domain.Customer, error)
-	Exists(email, auth0ID, password string) (*domain.Customer, error)
+	Exists(email, auth0ID string) (*domain.Customer, error)
 	Delete(customer *domain.Customer) error
 }
 
@@ -98,7 +98,6 @@ func (c *customerService) Update(customer *domain.Customer) (
 func (c *customerService) Exists(
 	email string,
 	auth0ID string,
-	_ string,
 ) (*domain.Customer, error) {
 	customer, err := c.getCustomer(email, auth0ID)
 	if err != nil {

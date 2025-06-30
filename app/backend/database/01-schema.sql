@@ -147,8 +147,8 @@ CREATE TABLE orders (
   currency VARCHAR(3) DEFAULT 'USD',
   tax_amount INTEGER DEFAULT 0,
   status VARCHAR(50) NOT NULL DEFAULT 'pending',
-  -- Of the from BDE-YYYYMMDD-XXXXXXXX
-  order_number VARCHAR(21) UNIQUE NOT NULL,
+  -- Of the from BDE-YYYY-MM-DD-XXXXXXXXXXXXXXXXXXXXXXXX
+  order_number VARCHAR(39) UNIQUE NOT NULL,
   billing_email VARCHAR(255) NOT NULL,
   billing_name VARCHAR(200),
   created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
@@ -180,11 +180,21 @@ CREATE TABLE order_items (
   product_name VARCHAR(200) NOT NULL,
   product_price INTEGER NOT NULL,
   quantity INTEGER NOT NULL DEFAULT 1,
+  status VARCHAR(50) NOT NULL DEFAULT 'pending',
   line_total INTEGER NOT NULL,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT order_items_quantity_positive CHECK (quantity > 0),
   CONSTRAINT order_items_price_positive CHECK (product_price >= 0),
-  CONSTRAINT order_items_total_positive CHECK (line_total >= 0)
+  CONSTRAINT order_items_total_positive CHECK (line_total >= 0) CONSTRAINT orders_status_valid CHECK (
+    status IN (
+      'pending',
+      'processing',
+      'completed',
+      'failed',
+      'refunded',
+      'cancelled'
+    )
+  )
 );
 
 -- ============================================================================
@@ -282,7 +292,7 @@ EXECUTE FUNCTION update_updated_at_column ();
 -- CREATE OR REPLACE FUNCTION generate_order_number()
 -- RETURNS TRIGGER AS $$
 -- BEGIN
---     -- Generate order number in format: BDE-YYYYMMDD-XXXX
+--     -- Generate order number in format: BDE-YYYYMMDD-XXXXXXXX
 --     NEW.order_number = 'BDE-' || TO_CHAR(CURRENT_DATE, 'YYYYMMDD') || '-' || 
 --                        LPAD(EXTRACT(EPOCH FROM NEW.created_at)::INTEGER % 10000, 4, '0');
 --     RETURN NEW;

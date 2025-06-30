@@ -110,19 +110,34 @@ func PwnHash(password []byte) (string, error) {
 }
 
 // totalBytes is the total number of bytes to generate for random values.
-const totalBytes = 12
+const totalRandHashBytes = 16
 
 // generateSalt creates a salt that can be used in a hashing algorithm
 // for password generation.
 //
 // See: https://thecopenhagenbook.com/random-values
 func generateSalt() (string, error) {
-	b := make([]byte, totalBytes)
+	b := make([]byte, totalRandHashBytes)
 	_, err := rand.Read(b)
 	if err != nil {
 		return "", errors.Wrap(err, "failed to generate salt")
 	}
-	return base32.StdEncoding.EncodeToString(b), nil
+	return base64.RawStdEncoding.EncodeToString(b), nil
+}
+
+// totalRandStringBytes is the total number of bytes to generate for a 32 bit
+// encoded random string.
+const totalRandStringBytes = 15
+
+// GenerateRandomString generates a random string of 24 alphanumeric characters.
+func GenerateRandomString() (string, error) {
+	customEncoding := base32.NewEncoding("0123456789ABCDEFGHJKMNPQRSTVWXYZ")
+	bytes := make([]byte, totalRandStringBytes)
+	_, err := rand.Read(bytes)
+	if err != nil {
+		return "", errors.Wrap(err, "failed to generate random string")
+	}
+	return customEncoding.EncodeToString(bytes), nil
 }
 
 // invalidHashLength is the valid number total of keys in a stored hash.
