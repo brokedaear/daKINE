@@ -116,22 +116,24 @@ CREATE TABLE product_categories (
 -- ============================================================================
 CREATE TABLE products (
   id UUID PRIMARY KEY DEFAULT uuidv7 (),
+  product_type VARCHAR(20) NOT NULL DEFAULT 'plugin',
   name VARCHAR(200) NOT NULL,
   description TEXT NOT NULL,
   short_description VARCHAR(500),
+  price_id VARCHAR(255),
   price INTEGER NOT NULL,
-  currency VARCHAR(3) DEFAULT 'USD',
-  version VARCHAR(20) NOT NULL DEFAULT '1.0.0',
-  download_filename VARCHAR(255) NOT NULL,
-  file_size_bytes BIGINT,
-  file_checksum VARCHAR(64),
-  -- SPEC: v1.0.0-s3.1.2
-  credits TEXT,
+  product_id VARCHAR(255),
   category_id UUID REFERENCES product_categories (id),
+  credits TEXT,
+  download_filename VARCHAR(255) NOT NULL,
+  download_filesize BIGINT,
+  download_checksum VARCHAR(128),
   created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+  deleted_at TIMESTAMP WITH TIME ZONE DEFAULT NULL,
   released_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-  CONSTRAINT products_price_positive CHECK (price >= 0)
+  CONSTRAINT products_price_positive CHECK (price >= 0),
+  CONSTRAINT products_type_valid CHECK (product_type IN ('plugin', 'merchandise'))
 );
 
 -- ============================================================================
@@ -183,9 +185,12 @@ CREATE TABLE order_items (
   status VARCHAR(50) NOT NULL DEFAULT 'pending',
   line_total INTEGER NOT NULL,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+  deleted_at TIMESTAMP WITH TIME ZONE DEFAULT NULL,
   CONSTRAINT order_items_quantity_positive CHECK (quantity > 0),
   CONSTRAINT order_items_price_positive CHECK (product_price >= 0),
-  CONSTRAINT order_items_total_positive CHECK (line_total >= 0) CONSTRAINT orders_status_valid CHECK (
+  CONSTRAINT order_items_total_positive CHECK (line_total >= 0),
+  CONSTRAINT order_items_status_valid CHECK (
     status IN (
       'pending',
       'processing',
@@ -284,6 +289,10 @@ EXECUTE FUNCTION update_updated_at_column ();
 
 CREATE TRIGGER update_orders_updated_at BEFORE
 UPDATE ON orders FOR EACH ROW
+EXECUTE FUNCTION update_updated_at_column ();
+
+CREATE TRIGGER update_order_items_updated_at BEFORE
+UPDATE ON order_items FOR EACH ROW
 EXECUTE FUNCTION update_updated_at_column ();
 
 -- Keep this order number generation in the application layer, lol.
