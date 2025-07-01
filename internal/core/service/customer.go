@@ -6,6 +6,7 @@ package service
 
 import (
 	"slices"
+	"time"
 
 	"go.brokedaear.com/internal/core/domain"
 	"go.brokedaear.com/internal/core/server"
@@ -14,27 +15,10 @@ import (
 )
 
 // CustomerRepository operates on data related to customer actions.
-type CustomerRepository interface {
-	CustomerAdder
-	CustomerDeleter
-	CustomerUpdater
-	CustomerRetriever
-}
-
-type CustomerAdder interface {
+type customerRepository interface {
 	Insert(*domain.Customer) error
-}
-
-type CustomerDeleter interface {
 	Delete(*domain.Customer) error
-}
-
-type CustomerUpdater interface {
-	UpdateInformation(*domain.Customer) error
-	UpdatePassword(*domain.Customer) error
-}
-
-type CustomerRetriever interface {
+	Update(*domain.Customer) error
 	GetByID(string) (*domain.Customer, error)
 	GetByOAuthID(string) (*domain.Customer, error)
 	GetByEmail(string) (*domain.Customer, error)
@@ -47,14 +31,15 @@ type CustomerRetriever interface {
 // authenticated operations.
 type CustomerService struct {
 	*ServiceBase
-	repo       CustomerRepository
-	pwnChecker PwnChecker[[]string]
+	repo        customerRepository
+	sessionRepo sessionRepository
+	pwnChecker  PwnChecker[[]string]
 }
 
 // NewCustomerService creates a new CustomerService.
 func NewCustomerService(
 	svcBase *ServiceBase,
-	repo CustomerRepository,
+	repo customerRepository,
 ) *CustomerService {
 	p := pwnCheckOnline[[]string]{
 		checker: server.NewHTTPRequestClient(
@@ -68,15 +53,11 @@ func NewCustomerService(
 	}
 }
 
-func (c *CustomerService) DeleteCustomer(_ *domain.Customer) error {
-	return nil
-}
-
 func (c *CustomerService) Update(customer *domain.Customer) (
 	*domain.Customer,
 	error,
 ) {
-	err := c.repo.UpdateInformation(customer)
+	err := c.repo.Update(customer)
 	if err != nil {
 		return nil, err
 	}
@@ -98,12 +79,18 @@ func (c *CustomerService) Exists(
 	return nil, ErrCustomerDoesNotExist
 }
 
-// Delete deletes a customer.
+// Delete deletes a customer by first invalidating their session and then
+// removing their row in the application database.
 func (c *CustomerService) Delete(customer *domain.Customer) error {
-	err := c.repo.Delete(customer)
+	err := c.deleteUserSession(customer)
 	if err != nil {
 		return err
 	}
+	err = c.repo.Delete(customer)
+	if err != nil {
+		return err
+	}
+	c.logger.Info("deleted customer", "customer_id", customer.ID)
 	return nil
 }
 
@@ -127,15 +114,56 @@ func (c *CustomerService) SignIn(email, auth0ID, password string) (
 	if err != nil {
 		return nil, ErrCustomerLoginFailed
 	}
+
 	storedHash := string(customer.PasswordHash)
+
 	ok, err := crypto.ValidatePassword(password, storedHash)
-	if err != nil || !ok {
+	if err != nil {
+		return nil, err
+	}
+	if !ok {
 		c.logger.Warn("incorrect user password", "customer_id", customer.ID)
 		return nil, ErrCustomerLoginFailed
 	}
-	// TODO: Add the user to the active sessions database. But this will probably
-	// happen in the frontend.
+
+	c.newUserSession(customer.ID)
+
 	return customer, nil
+}
+
+// sessionDuration represents a month.
+const sessionDuration = 30 * 24 * time.Hour
+
+func (c *CustomerService) newUserSession(customerID string) {
+	session := domain.NewUserSession(customerID, sessionDuration)
+	c.sessionRepo.Insert(session)
+}
+
+func (c *CustomerService) deleteUserSession(customer *domain.Customer) error {
+	session, ok := c.sessionRepo.GetByCustomer(customer)
+	if !ok {
+		return errors.New("invalid session")
+	}
+	return c.sessionRepo.Delete(session.Token)
+}
+
+func (c *CustomerService) validateSession(sessionID string) (bool, error) {
+	session, ok := c.sessionRepo.GetByToken(sessionID)
+	if !ok {
+		return false, nil
+	}
+	if time.Now().After(session.ExpiresAt) {
+		return false, errors.New("expired session")
+	}
+	// if time.Now().After(session.ExpiresAt.Sub(sessionExpiresIn / 2)) {
+	// 	session.ExpiresAt = time.Now().Add(sessionExpiresIn)
+	// }
+	return true, nil
+}
+
+// SignOut signs a customer out by invalidating their login session.
+func (c *CustomerService) SignOut(customer *domain.Customer) error {
+	return c.deleteUserSession(customer)
 }
 
 const reallyLongPasswordLength = 256

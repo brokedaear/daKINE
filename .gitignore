@@ -13,6 +13,7 @@ vendor
 
 .claude/settings.local.json
 CLAUDE.md
+GEMINI.md
 
 app/backend/database/data
 *.txt
