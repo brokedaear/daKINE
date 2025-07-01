@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"time"
 
+	"go.brokedaear.com/pkg/collections"
 	"go.brokedaear.com/pkg/crypto"
 	"go.brokedaear.com/pkg/errors"
 	"go.brokedaear.com/pkg/uuid"
@@ -88,8 +89,9 @@ type Order struct {
 	// GrandTotal is the total amount to be paid.
 	GrandTotal int `json:"grand_total"`
 	// CurrencyID is the three character currency identifier, like USD or CNY.
-	CurrencyID string            `json:"currency_id"`
-	Status     FulfillmentStatus `json:"status"`
+	CurrencyID string `json:"currency_id"`
+	// Status is the fulfillment status of the order.
+	Status FulfillmentStatus `json:"status"`
 	// CreatedAt is the date the order was created at.
 	CreatedAt time.Time
 	// UpdatedAt is the date the order was updated at.
@@ -103,7 +105,7 @@ type Order struct {
 }
 
 // NewOrder creates a new customer order.
-func NewOrder(items ...LineItem) (*Order, error) {
+func NewOrder(currency string, items ...LineItem) (*Order, error) {
 	now, id, err := newTimeWithID()
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to make new order")
@@ -112,10 +114,15 @@ func NewOrder(items ...LineItem) (*Order, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to make new order")
 	}
+	grandTotal := collections.Reduce(items, func(total int, item LineItem) int {
+		return total + item.Product.Price
+	}, 0)
 	return &Order{
 		ID:          id,
 		Items:       items,
 		OrderNumber: orderID,
+		CurrencyID:  currency,
+		GrandTotal:  grandTotal,
 		Status:      PendingStatus,
 		CreatedAt:   *now,
 		UpdatedAt:   *now,

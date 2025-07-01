@@ -7,8 +7,6 @@ package service
 import (
 	"slices"
 
-	"go.brokedaear.com/internal/common/telemetry"
-	"go.brokedaear.com/internal/common/utils/loggers"
 	"go.brokedaear.com/internal/core/domain"
 	"go.brokedaear.com/internal/core/server"
 	"go.brokedaear.com/pkg/crypto"
@@ -56,26 +54,24 @@ type CustomerService interface {
 
 // NewCustomerService creates a new CustomerService.
 func NewCustomerService(
+	svcBase *ServiceBase,
 	repo CustomerRepository,
-	tel telemetry.Telemetry,
-	log loggers.Logger,
 ) CustomerService {
 	p := pwnCheckOnline[[]string]{
 		checker: server.NewHTTPRequestClient(
-			log,
-			tel,
+			svcBase.logger,
+			svcBase.tel,
 			stringSliceParser[[]string]{},
 		),
 	}
 	return &customerService{
-		repo: repo, tel: tel, logger: log, pwnChecker: p,
+		ServiceBase: svcBase, repo: repo, pwnChecker: p,
 	}
 }
 
 type customerService struct {
+	*ServiceBase
 	repo       CustomerRepository
-	tel        telemetry.Telemetry
-	logger     loggers.Logger
 	pwnChecker PwnChecker[[]string]
 }
 
