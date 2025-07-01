@@ -9,11 +9,13 @@ type UserSession struct {
 	ExpiresAt time.Time
 }
 
-func NewUserSession(userID string, expiresAt time.Time) *UserSession {
+func NewUserSession(userID string, validFor time.Duration) *UserSession {
+	now := time.Now().UTC()
+	d := now.Add(validFor)
 	return &UserSession{
 		Token:     "",
 		UserID:    userID,
-		CreatedAt: time.Now(),
-		ExpiresAt: expiresAt,
+		CreatedAt: now,
+		ExpiresAt: d,
 	}
 }

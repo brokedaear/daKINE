@@ -13,7 +13,7 @@ import (
 
 type sessionRepository interface {
 	Get(token string) (session *domain.UserSession, ok bool)
-	Set(customerSession *domain.UserSession)
+	Insert(customerSession *domain.UserSession)
 	Update()
 	Delete(token string)
 }
@@ -31,6 +31,12 @@ func NewSessionService(svcBase *ServiceBase, repo sessionRepository) *SessionSer
 	}
 }
 
+func (s *SessionService) NewSession(userID string) *domain.UserSession {
+	session := domain.NewUserSession(userID, sessionDuration)
+	s.repo.Insert(session)
+	return session
+}
+
 // Validate checks if a session is valid, given its token.
 func (s *SessionService) Validate(token string) (bool, error) {
 	session, ok := s.repo.Get(token)
@@ -46,5 +52,5 @@ func (s *SessionService) Validate(token string) (bool, error) {
 	return true, nil
 }
 
-// sessionExpiresIn represents a month.
-// const sessionExpiresIn = 30 * 24 * time.Hour
+// sessionDuration represents a month.
+const sessionDuration = 30 * 24 * time.Hour

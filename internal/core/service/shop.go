@@ -21,22 +21,18 @@ type paymentProcessor interface {
 
 // WebshopService enables customers to purchase and refund their
 // products.
-type WebshopService interface {
-	Purchase(product *domain.Product) error
+type WebshopService struct {
+	paymentProcessor paymentProcessor
+	repo             WebshopCustomerHandler
 }
 
-func NewWebshopService(processor paymentProcessor, repo WebshopCustomerHandler) WebshopService {
-	return &webshopService{
+func NewWebshopService(processor paymentProcessor, repo WebshopCustomerHandler) *WebshopService {
+	return &WebshopService{
 		paymentProcessor: processor,
 		repo:             repo,
 	}
 }
 
-type webshopService struct {
-	paymentProcessor paymentProcessor
-	repo             WebshopCustomerHandler
-}
-
-func (w webshopService) Purchase(_ *domain.Product) error {
+func (w WebshopService) Purchase(_ *domain.Product) error {
 	return nil
 }

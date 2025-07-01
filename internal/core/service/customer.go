@@ -45,18 +45,17 @@ type CustomerRetriever interface {
 // In other words, the data passed to the methods of CustomerService are
 // assumed to be already validated. These methods are therefore already
 // authenticated operations.
-type CustomerService interface {
-	SignIn(email, auth0ID, password string) (*domain.Customer, error)
-	SignUp(email, auth0ID, password string) (*domain.Customer, error)
-	Exists(email, auth0ID string) (*domain.Customer, error)
-	Delete(customer *domain.Customer) error
+type CustomerService struct {
+	*ServiceBase
+	repo       CustomerRepository
+	pwnChecker PwnChecker[[]string]
 }
 
 // NewCustomerService creates a new CustomerService.
 func NewCustomerService(
 	svcBase *ServiceBase,
 	repo CustomerRepository,
-) CustomerService {
+) *CustomerService {
 	p := pwnCheckOnline[[]string]{
 		checker: server.NewHTTPRequestClient(
 			svcBase.logger,
@@ -64,22 +63,16 @@ func NewCustomerService(
 			stringSliceParser[[]string]{},
 		),
 	}
-	return &customerService{
+	return &CustomerService{
 		ServiceBase: svcBase, repo: repo, pwnChecker: p,
 	}
 }
 
-type customerService struct {
-	*ServiceBase
-	repo       CustomerRepository
-	pwnChecker PwnChecker[[]string]
-}
-
-func (c *customerService) DeleteCustomer(_ *domain.Customer) error {
+func (c *CustomerService) DeleteCustomer(_ *domain.Customer) error {
 	return nil
 }
 
-func (c *customerService) Update(customer *domain.Customer) (
+func (c *CustomerService) Update(customer *domain.Customer) (
 	*domain.Customer,
 	error,
 ) {
@@ -91,7 +84,7 @@ func (c *customerService) Update(customer *domain.Customer) (
 }
 
 // Exists returns a customer if they exist.
-func (c *customerService) Exists(
+func (c *CustomerService) Exists(
 	email string,
 	auth0ID string,
 ) (*domain.Customer, error) {
@@ -106,7 +99,7 @@ func (c *customerService) Exists(
 }
 
 // Delete deletes a customer.
-func (c *customerService) Delete(customer *domain.Customer) error {
+func (c *CustomerService) Delete(customer *domain.Customer) error {
 	err := c.repo.Delete(customer)
 	if err != nil {
 		return err
@@ -115,7 +108,7 @@ func (c *customerService) Delete(customer *domain.Customer) error {
 }
 
 // SignIn signs a customer into the application.
-func (c *customerService) SignIn(email, auth0ID, password string) (
+func (c *CustomerService) SignIn(email, auth0ID, password string) (
 	*domain.Customer,
 	error,
 ) {
@@ -173,7 +166,7 @@ const reallyLongPasswordLength = 256
 //     are authenticated as via Auth0, the customer data is returned--no sign up
 //     takes place.
 //  2. Else, the customer is inserted directly into the database.
-func (c *customerService) SignUp(email, auth0ID, password string) (
+func (c *CustomerService) SignUp(email, auth0ID, password string) (
 	*domain.Customer,
 	error,
 ) {
@@ -247,7 +240,7 @@ func hasZeroValue(vals ...string) bool {
 // an error is returned. Of course, the frontend can validate that a request
 // does not send a flawed sign-up request, but checking once again in
 // the backend is a good sanitary habit.
-func (c *customerService) getCustomer(email, auth0ID string) (
+func (c *CustomerService) getCustomer(email, auth0ID string) (
 	*domain.Customer,
 	error,
 ) {
